@@ -12,4 +12,4 @@ Network observers can also observe the time between redeeming the CovidCode and 
 
 To ensure that the real distribution is not too erratic, the SwissCovid app waits a uniformly random time of 5 seconds after all user actions are completed before making the actual uploads. Dummy requests instead wait between 0 and 3 minutes between redeeming a code and making the uploads. The fact that the real distribution is somewhat smoothed due to the extra delay, and the ratio of dummy uploads and real uploads is very high, ensures that users have good protection despite these distributions not matching.
 
-A detailed description and analysis of these processes can be found in the accompanying notebook.
+A detailed description and analysis of these processes can be found [in the accompanying notebook](swisscovid/dummy-analysis.ipynb).
