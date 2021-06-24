@@ -1,3 +1,7 @@
-<h1>SwissCovid Covidcode</h1>
+# SwissCovid CovidCode
 
-Users that test positive for COVID-19 receive a Covidcode. The responsible health ageny that tested the user positive can use the [CovidCode UI](https://github.com/admin-ch/CovidCode-UI) to generate this code. If users do not receive this code in time, they can also request a code by calling the hotline number provided in the app. The COVID-positive user enters this Covidcode into the SwissCovid app. The app validates the code to retrieve two authentication tokens at the [CovidCode Service](https://github.com/admin-ch/CovidCode-service), and then uploads the user’s TEKs for the proximity tracing to the SwissCovid red backend together with one of the authentication tokens as well as the list of check-ins to the SwissCovid purple backend together with one of the authentication tokens.
+For security reasons, only index cases -- i.e., users with a positive COVID-19 diagnosis -- should be able to upload tracing information to the backend servers. SwissCovid uses one-time-use codes, called CovidCodes, to authenticate uploads by users.
+
+The public health authorities are responsible for providing this CovidCode to every index case. The authorities can use the [CovidCode UI](https://github.com/admin-ch/CovidCode-UI) to generate CovidCodes. Normally, users should receive their CovidCode automatically. If they do not, they can also request a CovidCode by calling the hotline number provided in the app.
+
+After receiving a CovidCode, users enter their code in the app. The app validates the code at the [CovidCode Service](https://github.com/admin-ch/CovidCode-service). If the CovidCode is valid (i.e., it did not yet expire and has not been used before) the CovidCode Service issues two upload authorization tokens. The app uses one token to upload the user’s TEKs for proximity tracing to the SwissCovid red backend. It uses the other token to upload the list of check-ins to the SwissCovid purple backend.

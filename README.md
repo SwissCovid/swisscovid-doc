@@ -1,21 +1,17 @@
 <h1 align="center">SwissCovid Documentation</h1>
 
-This repository serves as an entry point for the documentation of SwissCovid. The SwissCovid 2.0 app uses to types of contact tracing to prevent the spread of COVID-19.
+This repository serves as an entry point for the documentation of SwissCovid. The SwissCovid 2.0 app uses two types of contact tracing to prevent the spread of COVID-19.
 
-With proximity tracing close contacts are detected using the bluetooth technology. For this the [DP3T SDK](https://github.com/DP-3T/documents) is used that builds on top of the [Google & Apple Exposure Notifications](https://www.google.com/covid19/exposurenotifications/). This feature is called SwissCovid encounters.
-
-With presence tracing people that are at the same venue at the same time are detected. For this the [CrowdNotifier SDK](https://github.com/CrowdNotifier/documents) is used that provides a secure, decentralized, privacy-preserving presence tracing system. This feature is called SwissCovid Check-in.
+ * *Proximity Tracing*. SwissCovid uses proximity tracing to notify users when they have been close to a COVID-19 positive person. Proximity tracing uses Bluetooth technology to estimate distance. SwissCovid builds on the [DP3T SDK](https://github.com/DP-3T/documents), which in turn uses the [Google & Apple Exposure Notifications framework](https://www.google.com/covid19/exposurenotifications/). This feature is called _SwissCovid Encounters_.
+ 
+ * *Presence Tracing*. SwissCovid uses presence tracing to notify users when they have been at the same location/venue at the same time as a COVID-19 positive person. Presence tracing builds on the [CrowdNotifier SDK](https://github.com/CrowdNotifier/documents) to provides a secure, decentralized, privacy-preserving presence tracing. This feature is called _SwissCovid Check-in_.
 
 ## Content
-- [Architecture Overview](01-architecture-overview.md)
+- [SwissCovid Components](01-architecture-overview.md)
 - [Covidcode](02-covidcode.md)
-- [Dummy traffic](03-dummytraffic.md)
-
-#### DP3T
-- [Overview](dp3t/01-overview.md)
+- [Traffic analysis resistance](03-traffic-analysis.md)
 
 #### CrowdNotifier
-- [Overview](crowdnotifier/01-overview.md)
 - [QR-Code format](crowdnotifier/02-qrcode-format.md)
 - [Background synchronisation](crowdnotifier/03-background-synchronisation.md)
 
@@ -32,7 +28,7 @@ With presence tracing people that are at the same venue at the same time are det
 * QR Code Landingpage: [swisscovid-qr-landingpage](https://github.com/SwissCovid/swisscovid-qr-landingpage)
 
 ## DP^3T
-The Decentralised Privacy-Preserving Proximity Tracing (DP-3T) project is an open protocol for COVID-19 proximity tracing using Bluetooth Low Energy functionality on mobile devices that ensures personal data and computation stays entirely on an individual's phone. It was produced by a core team of over 25 scientists and academic researchers from across Europe. It has also been scrutinized and improved by the wider community.
+The Decentralised Privacy-Preserving Proximity Tracing (DP-3T) project is an open protocol for COVID-19 proximity tracing using Bluetooth Low Energy functionality on mobile devices that ensures personal data and computation stays entirely on an individual's phone. It was produced by a core team of over 25 scientists and academic researchers from across Europe. It has also been scrutinized and improved by the wider community. The core of the design of SwissCovid and some of its protections follow closely the recommendations of the DP-3T project.
 
 DP^3T is a free-standing effort started at EPFL and ETHZ that produced this protocol and that is implementing it in an open-sourced app and server.
 
@@ -43,12 +39,13 @@ DP^3T is a free-standing effort started at EPFL and ETHZ that produced this prot
 * Backend SDK: [dp3t-sdk-backend](https://github.com/DP-3T/dp3t-sdk-backend)
 
 ## CrowdNotifier
-CrowdNotifier proposes a protocol for building secure, decentralized, privacy-preserving presence tracing systems. It simplifies and accelerates the process of notifying individuals that shared a semi-public location with a SARS-CoV-2-positive person for a prolonged time without introducing new risks for users and locations. Existing proximity tracing systems (apps for contact tracing such as SwissCovid, Corona Warn App, and Immuni) notify only a subset of these people: those that were close enough for long enough. Current events have shown the need to notify all people that shared a space with a SARS-CoV-2-positive person. The proposed system provides an alternative to other presence-tracing systems that are based on invasive collection or that are prone to abuse by authorities.
+CrowdNotifier is a protocol for building secure, decentralized, privacy-preserving presence tracing systems. It simplifies and accelerates the process of notifying individuals that shared a semi-public location with a SARS-CoV-2-positive person for a prolonged time without introducing new risks for users and locations. Proximity tracing systems (such as the Encounter functionality in SwissCovid) notify only a subset of these people: those that were close enough for long enough.
 
-The CrowdNotifier design aims to minimize privacy and security risks for individuals and communities, while guaranteeing the highest level of data protection and good usability and deployability. For further details on the design, see the [CrowdNotifier technical specification](https://crowdnotifier.readthedocs.io/).
+The CrowdNotifier design aims to minimize privacy and security risks for individuals and communities and limit the possibility of abuse, while guaranteeing the highest level of data protection and good usability and deployability. For further details on the design, see the [CrowdNotifier technical specification](https://crowdnotifier.readthedocs.io/).
 
 ### Repositories
 * Documents: [crowdnotifier-documents](https://github.com/CrowdNotifier/documents)
+* Technical Specification: [crowdnotifier-techspec](https://crowdnotifier.readthedocs.io)
 * Android SDK: [crowdnotifier-sdk-android](https://github.com/CrowdNotifier/crowdnotifier-sdk-android)
 * iOS SDK: [crowdnotifier-sdk-ios](https://github.com/CrowdNotifier/crowdnotifier-sdk-ios)
 * Backend: [swisscovid-cn-backend](https://github.com/SwissCovid/swisscovid-cn-backend)

@@ -1,4 +1,4 @@
-<h1>SwissCovid Architecture</h1>
+<h1>SwissCovid Components</h1>
 
 The SwissCovid app consists of several frontend and backend components:
 

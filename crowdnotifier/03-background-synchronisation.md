@@ -1,25 +1,31 @@
-<h1>Background synchronisation</h1>
+# Background Exposure Checks
 
-SwissCovid Check-ins have to synchronize for potential matches regularly in the background due to the decentralized architecture. Even if the user does not open the app, the app should periodically download the list of traceKeys from the backend and check them for potential matches. However, background processes are unreliable on mobile phones, especially on iOS. They might be delayed by moren than a day, or not run at all. As long as ExposureNotifications are activated, the frameworks of Apple and Google make sure that the SwissCovid app can run every two hours in the background. As soon as ExposureNotifications are turned off, the app looses this privilege and therefore need a separate mechanism for users using only the SwissCovid Check-in functionality.
+CrowdNotifier requires apps to download tracing information in the background so that apps can check for exposures in stored check-ins. To ensure timely notifications, these checks must happen frequently. They should also happen if the user does not open the app. However, background processes are unreliable on mobile phones, especially on iOS. They might be delayed by more than a day, or not run at all.
 
-<h1>Android</h1>
+As long as ExposureNotifications are activated, the frameworks of Apple and Google make sure that the SwissCovid app can run every two hours in the background. As soon as ExposureNotifications are turned off (e.g., because users disable SwissCovid Encounters), the app looses this privilege. Therefore the app need a separate mechanism for users using only the SwissCovid Check-in functionality.
 
-On Android for the background synchronisation the normal WorkManager API is used, if ExposureNotifications are enabled or not. In addition the user is asked to disable battery optimizations for the SwissCovid app to prevent the app from being put into app standby mode. Some vendors have additional more aggressive power optimization mechanisms, but most of them were deactivated for the SwissCovid app specifically. As long as ExposureNotifications are active, the [Google Play Services](https://developers.google.com/android/exposure-notifications/release-notes#new_six-hour_wakeupservice_cadence) make sure every six hours that our app is running or restart it if it was killed. We can not provide this guarantee if ExposureNotifications are deactivated, but if the user is using the SwissCovid check-in feature, the app has to be opened from time to time.
+## Android
 
-<h1>iOS</h1>
+SwissCovid on Android always uses the normal WorkManager API to schedule background synchronization. This API is used regardless of whether SwissCovid Encounters are turned on or off. To ensure the app receives enough processing time, SwissCovid requests that users disable battery optimizations for SwissCovid (this prevents the app from being put into app standby mode).
 
-On iOS several methods are used to unsure background processing time. If ExposureNotification is turned on we can rely on the scheduling of background processing tasks by apple. In the case where check-ins are used and ExposureNotifications are turned off we have to use silent push notifications to guarantee a regular synchronization of trace keys.
+Some vendors use more aggressive power optimization mechanisms. But most of them were deactivated for the SwissCovid app specifically. Moreover, as long as ExposureNotifications are active, [Google Play Services](https://developers.google.com/android/exposure-notifications/release-notes#new_six-hour_wakeupservice_cadence) will restart SwissCovid even if it was killed due to an aggressive power manager.
 
-## Background processing on iOS
+When users use SwissCovid Check-ins only (e.g., SwissCovid encounters is deactivated), Google Play Services will not restart the app. But, because the user must open the app to check-in, we assume apps will run often enough to notify users.
+
+## iOS
+
+SwissCovid on iOS uses several methods to unsure background processing time. If SwissCovid Encounters is turned on, we rely on the scheduling of background processing tasks by iOS. In the case where only SwissCovid Check-ins are used we use silent push notifications to guarantee a regular synchronization of trace keys. We detail the specific mechanisms below.
+
+### Background processing on iOS
 
 SwissCovid uses two different mechanisms to schedule background processes depending on the iOS version:
 
-* On devices running iOS 13 and above, Apple's [BackgroundTasks framework](https://developer.apple.com/documentation/backgroundtasks) is used. It allows to schedule tasks that will opportunistically be executed in the background, depending on various conditions such as frequency of app usage, battery level and network connectivity. There is no guarantee that tasks will reliably be scheduled. To maximize chances of execution, SwissCovid schedules both [BGProcessingTasks](https://developer.apple.com/documentation/backgroundtasks/bgprocessingtask) *and* [BGAppRefreshTasks](https://developer.apple.com/documentation/backgroundtasks/bgapprefreshtask), both of which trigger a sync with the server to download new data and locally check for new exposures.
-* On devices running iOS 12 and below, the BackgroundTasks framework is not available. Apple [provides a mechanism](https://developer.apple.com/documentation/exposurenotification/supporting_exposure_notifications_in_ios_12_5) for these devices to receive background execution time. This is only usable if ExposureNotification is enabled.
+* On devices running iOS 13 and above, SwissCovid uses Apple's [BackgroundTasks framework](https://developer.apple.com/documentation/backgroundtasks). This framework enables scheduling tasks that will opportunistically be executed in the background, depending on various conditions such as frequency of app usage, battery level and network connectivity. There is no guarantee that tasks will reliably be scheduled. To maximize chances of execution, SwissCovid schedules both [BGProcessingTasks](https://developer.apple.com/documentation/backgroundtasks/bgprocessingtask) *and* [BGAppRefreshTasks](https://developer.apple.com/documentation/backgroundtasks/bgapprefreshtask), both of which trigger a sync with the server to download new data and locally check for new exposures.
+* On devices running iOS 12 and below, the BackgroundTasks framework is not available. Apple [provides a mechanism](https://developer.apple.com/documentation/exposurenotification/supporting_exposure_notifications_in_ios_12_5) for these devices to receive background execution time. This is only usable if SwissCovid Encounters is enabled.
 
-These two mechanisms are only reliable if ExposureNotification is enabled.
+These two mechanisms are only reliable if SwissCovid Encounters is enabled.
 
-## Silent Pushes
+### Silent Pushes
 For users that have ExposureNotifications deactivated, the background tasks are not reliable enough. Therefore, SwisCovid uses in this case a different, more reliable mechanism of triggering syncs: silent pushes. Push messages are sent by the server and will always result in processing time being allocated to the app. Thereby ensuring that the app will always perform a timely sync with the server and can check for notifications.
 
 ### Apple Push Notification Service
@@ -39,13 +45,13 @@ A push payload looks like this:
 
 ### When does the SwissCovid app register for silent pushes
 
-As we only need the silent push feature as long as the user is using the check-in feature but has ExposureNotifications deactivated, the app only registers those users to receive silent pushes. The logic for registering and de-registering is as follows:
+As we only need the silent push feature as long as the user is using the check-in feature but has SwissCovid Encounters deactivated, the app only registers those users to receive silent pushes. The logic for registering and de-registering is as follows:
 
 #### Registration
 
-* Upon check-out (creation of a new check-in entry) the app checks if ExposureNotifications are deactivated. If so, the app registers itself for receiving silent pushes, unless it is already registered.
+* Upon check-out (creation of a new check-in entry) the app checks if SwissCovid Encounters is deactivated. If so, the app registers itself for receiving silent pushes, except if it is already registered.
 
-* If the user manually deactivates the ExposureNotifications from the SwissCovid app, the app checks if there are check-ins stored. If so, the app registers itself for receiving silent pushes.
+* If the user manually deactivates the SwissCovid Encounters from the SwissCovid app, the app checks if there are check-ins stored. If so, the app registers itself for receiving silent pushes.
 
 * On every app start, the app checks if there are check-ins stored, ExposureNotifications are deactivated and the user is not in the isolation state (where ExposureNotifications are always deactivated). If so, the app registers itself for receiving silent pushes, unless it is already registered or the registration is older than two weeks.
 
