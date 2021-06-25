@@ -50,5 +50,11 @@ The CrowdNotifier design aims to minimize privacy and security risks for individ
 * iOS SDK: [crowdnotifier-sdk-ios](https://github.com/CrowdNotifier/crowdnotifier-sdk-ios)
 * Backend: [swisscovid-cn-backend](https://github.com/SwissCovid/swisscovid-cn-backend)
 
+## Contribution Guide
+
+This project is truly open-source and we welcome any feedback on the documentation for both the implementation and security aspects.
+
+Bugs or potential problems should be reported using Github issues in the corresponding repositories. We welcome all pull requests that improve the quality of the documentation.
+
 ## License
 This project is licensed under the terms of the MPL 2 license. See the [LICENSE](LICENSE) file.
